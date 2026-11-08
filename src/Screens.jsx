@@ -199,6 +199,11 @@ export function Papers({ ctx }) {
 export function Questions({ ctx }) {
   const { L, q, setQ, v, setV } = ctx;
   const set = (k) => (val) => setQ({ ...q, [k]: val });
+  const setBiz = (k) => (val) => {
+    const nx = { ...q, [k]: val };
+    nx.business = nx.bizBooks ? "regular" : nx.bizPres || nx.bizPro ? "presumptive" : "none";
+    setQ(nx);
+  };
   const sv = (k) => (val) => setV({ ...v, [k]: val });
   return (
     <section className="page">
@@ -207,11 +212,10 @@ export function Questions({ ctx }) {
       <h1 className="t2">{L("কয়েকটা সহজ প্রশ্ন", "A few simple questions")}</h1>
 
       <h2 className="t3">{L("ব্যবসা বা পেশা থেকে আয় আছে?", "Any income from business or profession?")}</h2>
-      <Choice value={q.business} onChange={set("business")} options={[
-        ["none", L("না (বেতন, পেনশন, সুদ, শেয়ার)", "No (salary, pension, interest, shares)")],
-        ["presumptive", L("হ্যাঁ, ছোট ব্যবসা/পেশা, অনুমিত আয় (44AD/44ADA)", "Yes, small business or profession, presumptive")],
-        ["regular", L("হ্যাঁ, হিসাবের খাতা রাখি", "Yes, I keep books of accounts")],
-      ]} />
+      <p className="hint">{L("না থাকলে কিছুই টিক দেবেন না। একাধিক থাকলে সব টিক দিন।", "If none, tick nothing. If you have more than one kind, tick all of them.")}</p>
+      <Check checked={q.bizBooks} onChange={setBiz("bizBooks")}>{L("হিসাবের খাতা রাখি, ব্যবসা বা পেশা (নিট লাভ জানি)", "I keep books of accounts (I know my net profit)")}</Check>
+      <Check checked={q.bizPres} onChange={setBiz("bizPres")}>{L("ছোট ব্যবসা, অনুমিত আয় (44AD): দোকান, ট্রেডিং, সার্ভিস", "Small business, presumptive (44AD): shop, trading, services")}</Check>
+      <Check checked={q.bizPro} onChange={setBiz("bizPro")}>{L("ছোট পেশা, অনুমিত আয় (44ADA): ডাক্তার, শিক্ষক, পরামর্শদাতা, আর্কিটেক্ট ইত্যাদি", "Small profession, presumptive (44ADA): doctor, tutor, consultant, architect")}</Check>
 
       <h2 className="t3">{L("নিচের কোনোটা আছে?", "Any of these apply?")}</h2>
       <Check checked={q.speculative} onChange={set("speculative")}>{L("F&O বা intraday ট্রেডিং", "F&O or intraday trading")}</Check>
@@ -301,12 +305,17 @@ export function Income({ ctx }) {
       {q.business !== "none" && (
         <>
           <h2 className="t3">{L("ব্যবসা/পেশা", "Business / profession")}</h2>
-          {q.business === "presumptive" ? (
-            <div className="grid2">
-              {F("turnover", L("মোট বিক্রি/প্রাপ্তি", "Turnover / receipts"))}
-              <Field label={L("ব্যাংক/ডিজিটালে পাওয়া অংশ (%)", "Received digitally (%)")} money={false} inputMode="numeric" value={v.digitalPct} onChange={sv("digitalPct")} error={er("digitalPct")} />
-            </div>
-          ) : F("profit", L("নিট লাভ (খাতা অনুযায়ী)", "Net profit (per books)"))}
+          {q.bizBooks && (
+            <>
+              {F("profit", L("খাতা-রাখা ব্যবসা/পেশার নিট লাভ", "Net profit from books-based business / profession"), { hint: L("ক্ষতি হলে মাইনাস দিন", "Use a minus for a loss") })}
+              {F("booksTurnover", L("এর মোট টার্নওভার (জানা থাকলে, অডিট লাগবে কিনা দেখার জন্য)", "Its turnover (if known, to check whether an audit is needed)"))}
+            </>
+          )}
+          {q.bizPres && F("turnover", L("অনুমিত ব্যবসার মোট বিক্রি/প্রাপ্তি (44AD)", "Turnover of presumptive business (44AD)"))}
+          {q.bizPro && F("receiptsPro", L("অনুমিত পেশার মোট প্রাপ্তি (44ADA)", "Gross receipts of presumptive profession (44ADA)"))}
+          {(q.bizPres || q.bizPro) && (
+            <Field label={L("ব্যাংক/ডিজিটালে পাওয়া অংশ (%)", "Received digitally (%)")} money={false} inputMode="numeric" value={v.digitalPct} onChange={sv("digitalPct")} error={er("digitalPct")} />
+          )}
         </>
       )}
 

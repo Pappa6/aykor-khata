@@ -18,11 +18,11 @@ const EMPTY_V = {
   salary: "", exemptSalary: "", interestSavings: "", interestDeposit: "", dividend: "", otherIncome: "",
   stcg111A: "", stcgOther: "", ltcg112A: "", ltcgOther: "", bfStcl: "", bfLtcl: "",
   tds: "", advanceTaxPaid: "", selfAssessmentPaid: "",
-  turnover: "", digitalPct: "100", profit: "",
+  turnover: "", digitalPct: "100", profit: "", receiptsPro: "", booksTurnover: "",
   hpRent: "", hpMuni: "", hpInterest: "",
   d80C: "", d80D: "", d80CCD1B: "", d80CCD2: "", d80G: "",
 };
-const EMPTY_Q = { business: "none", speculative: false, foreign: false, esop: false, unlisted: false, director: false, hp: "none", hpMore: false, bf: false, oldDed: false };
+const EMPTY_Q = { business: "none", bizBooks: false, bizPres: false, bizPro: false, speculative: false, foreign: false, esop: false, unlisted: false, director: false, hp: "none", hpMore: false, bf: false, oldDed: false };
 const EMPTY_P = { name: "", pan: "", dob: "", ageBand: "below60" };
 
 const todayISO = () => new Date().toISOString().slice(0, 10);
@@ -105,7 +105,11 @@ export default function App() {
     selfAssessmentPaid: fromLedger.selfassess > 0 ? fromLedger.selfassess : n(v.selfAssessmentPaid),
     advanceByDue: fromLedger.advance > 0 ? advanceByPeriod(rules, fy, ledger) : n(v.advanceTaxPaid) > 0 ? [0, 0, 0, n(v.advanceTaxPaid)] : undefined,
     hp: { type: q.hp, rent: n(v.hpRent), municipalTax: n(v.hpMuni), interest: n(v.hpInterest) },
-    business: { type: q.business === "none" ? "none" : q.business === "regular" ? "regular" : v.profit ? "regular" : "44AD", turnover: n(v.turnover), digitalPct: n(v.digitalPct), profit: n(v.profit) },
+    businesses: [
+      ...(q.bizBooks ? [{ type: "regular", profit: n(v.profit) }] : []),
+      ...(q.bizPres ? [{ type: "44AD", turnover: n(v.turnover), digitalPct: n(v.digitalPct) }] : []),
+      ...(q.bizPro ? [{ type: "44ADA", turnover: n(v.receiptsPro) }] : []),
+    ],
     d80C: n(v.d80C), d80D: n(v.d80D), d80CCD1B: n(v.d80CCD1B), d80CCD2: n(v.d80CCD2), d80G: n(v.d80G),
     filingDate: late ? (fileOn || today) : undefined,
     place: "",
@@ -122,6 +126,10 @@ export default function App() {
       totalIncome: res.chosen.totalIncome,
       business: q.business === "none" ? "none" : q.business,
       turnover: n(v.turnover),
+      proReceipts: n(v.receiptsPro),
+      booksTurnover: q.bizBooks ? n(v.booksTurnover) : 0,
+      digital95: n(v.digitalPct) >= 95,
+      alsoPresumptive: q.bizPres || q.bizPro,
       hpCount,
       stcg: n(v.stcg111A) !== 0 || n(v.stcgOther) !== 0,
       ltcgOther: n(v.ltcgOther) !== 0,

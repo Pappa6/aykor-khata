@@ -20,6 +20,8 @@ const MONEY = {
   selfAssessmentPaid: ["Self Assessment কর", "Self-assessment tax"],
   turnover: ["বিক্রি/প্রাপ্তি", "Turnover"],
   profit: ["নিট লাভ", "Net profit"],
+  receiptsPro: ["পেশার মোট প্রাপ্তি", "Professional receipts"],
+  booksTurnover: ["খাতা-রাখা ব্যবসার টার্নওভার", "Books-based turnover"],
   hpRent: ["ভাড়া", "Rent"],
   hpMuni: ["পৌরকর", "Municipal tax"],
   hpInterest: ["বাড়ির ঋণের সুদ", "Home-loan interest"],
@@ -53,9 +55,13 @@ export function validateInputs({ v, q, profile, res, today }) {
     if (Math.abs(x) > MAX_SANE) E(k, `${bn}: সংখ্যাটা অস্বাভাবিক বড়। কমা বা শূন্য বেশি পড়েছে কিনা দেখুন।`, `${en}: the number looks too large. Check for extra zeros.`);
   }
   const dp = String(v.digitalPct ?? "").trim();
-  if (q.business === "presumptive" && dp !== "" && (!/^\d+(\.\d+)?$/.test(dp) || n(dp) > 100)) {
+  if ((q.bizPres || q.bizPro || q.business === "presumptive") && dp !== "" && (!/^\d+(\.\d+)?$/.test(dp) || n(dp) > 100)) {
     E("digitalPct", "ডিজিটালে পাওয়া অংশ ০ থেকে ১০০-র মধ্যে হতে হবে।", "Digital share must be between 0 and 100.");
   }
+
+  if (q.bizPres && n(v.turnover) > (n(v.digitalPct) >= 95 ? 30000000 : 20000000)) W("turnover", "অনুমিত ব্যবসার (44AD) সীমা ₹2 কোটি, ৯৫%-এর বেশি ডিজিটাল হলে ₹3 কোটি। এর বেশি হলে খাতা রাখতে হবে।", "The 44AD limit is ₹2 crore (₹3 crore if 95%+ is digital). Above that you must keep books.");
+  if (q.bizPro && n(v.receiptsPro) > (n(v.digitalPct) >= 95 ? 7500000 : 5000000)) W("receiptsPro", "অনুমিত পেশার (44ADA) সীমা ₹50 লাখ, ৯৫%-এর বেশি ডিজিটাল হলে ₹75 লাখ। এর বেশি হলে খাতা রাখতে হবে।", "The 44ADA limit is ₹50 lakh (₹75 lakh if 95%+ is digital). Above that you must keep books.");
+  if (q.bizBooks && n(v.booksTurnover) > 10000000) W("booksTurnover", "টার্নওভার ₹1 কোটির বেশি। ক্যাশ লেনদেন ৫%-এর মধ্যে হলে সীমা ₹10 কোটি, নইলে হিসাব অডিট (44AB) লাগবে। CA-কে দেখান।", "Turnover is above ₹1 crore. The audit limit is ₹10 crore only if cash stays within 5%; otherwise a 44AB audit is needed. Ask a CA.");
 
   // identity
   if (profile.pan && !/^[A-Z]{5}\d{4}[A-Z]$/.test(profile.pan)) {

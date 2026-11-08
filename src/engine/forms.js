@@ -24,9 +24,22 @@ export function selectForm(a) {
     !a.stcg && !a.ltcgOther && l112 >= 0 && l112 <= 125000;
   const hasCapitalGains = !!(a.stcg || a.ltcgOther || l112 !== 0);
 
+  // Schedule AL (assets and liabilities) is required above Rs 1 crore of total income.
+  const needsAL = (a.totalIncome || 0) > 10000000;
+  if (needsAL) say("মোট আয় ₹1 কোটির বেশি, তাই Schedule AL (সম্পদ ও দায়ের তালিকা) ভরতে হবে।", "Total income is above ₹1 crore, so Schedule AL (assets and liabilities) must be filled.");
+  // Tax audit warning for books-based turnover
+  if (a.booksTurnover && a.booksTurnover > 10000000) {
+    needCA("খাতা-রাখা ব্যবসার টার্নওভার ₹1 কোটির বেশি। ক্যাশ লেনদেন ৫%-এর মধ্যে থাকলে সীমা ₹10 কোটি, নইলে হিসাব অডিট (ধারা 44AB) লাগবে।", "Books-based turnover is above ₹1 crore. The audit limit is ₹10 crore only if cash stays within 5%; otherwise a tax audit (section 44AB) is needed.");
+  }
+  if (a.proReceipts && a.proReceipts > 5000000 && a.business === "regular") {
+    needCA("পেশার প্রাপ্তি ₹50 লাখের বেশি, খাতা রাখলে হিসাব অডিট (ধারা 44AB) লাগে।", "Professional receipts above ₹50 lakh with books need a tax audit (section 44AB).");
+  }
+
   // Business income
   if (a.business && a.business !== "none") {
-    const tOk = a.business === "presumptive" && (a.turnover || 0) <= 20000000;
+    const lim44AD = a.digital95 ? 30000000 : 20000000;
+    const lim44ADA = a.digital95 ? 7500000 : 5000000;
+    const tOk = a.business === "presumptive" && (a.turnover || 0) <= lim44AD && (a.proReceipts || 0) <= lim44ADA;
     const easy =
       tOk && !a.foreignAsset && !a.director && !a.unlisted && !a.bfLoss && !a.esop &&
       (a.totalIncome || 0) <= 5000000 && (!hasCapitalGains || onlySmall112A) && (a.hpCount || 0) <= 1;
@@ -34,7 +47,8 @@ export function selectForm(a) {
       say("ছোট ব্যবসা/পেশায় অনুমিত (presumptive) আয় ধরলে সহজ ফর্ম ITR-4 চলে।", "Presumptive income from a small business or profession can use the simpler ITR-4.");
       return { form: "ITR-4", reasons, ca, alt: "ITR-3" };
     }
-    say("ব্যবসা বা পেশার আয় আছে, এবং ITR-4-এর শর্ত মেলে না।", "Business or professional income that does not qualify for ITR-4.");
+    if (a.business === "regular" && a.alsoPresumptive) say("খাতা-রাখা আর অনুমিত, দুই ধরনের ব্যবসা/পেশাই আছে, তাই ITR-3 (একটা ফর্মেই দুটো ধরা যায়)।", "You have both books-based and presumptive income; ITR-3 covers both.");
+    else say("ব্যবসা বা পেশার আয় আছে, এবং ITR-4-এর শর্ত মেলে না।", "Business or professional income that does not qualify for ITR-4.");
     return { form: "ITR-3", reasons, ca, alt: null };
   }
   if (a.speculative) {

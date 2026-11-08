@@ -202,6 +202,14 @@ export function buildGuide({ form, fy, res, inp, cg, rules, payments = [] }) {
     [B("Aadhaar OTP সবচেয়ে সহজ। শেষে Acknowledgement ডাউনলোড করে রাখুন, ব্যাংকের কাজে লাগবে।", "Aadhaar OTP is easiest. Download the acknowledgement; banks ask for it.")],
   );
 
+  if ((form === "ITR-2" || form === "ITR-3") && res.chosen.totalIncome > 10000000) {
+    sec.unshift({
+      title: B("Schedule AL (সম্পদ ও দায়)", "Schedule AL (assets and liabilities)"),
+      where: B("ফর্মের ভেতরে, Schedule AL", "Inside the form, Schedule AL"),
+      rows: [],
+      tips: [B("মোট আয় ₹1 কোটির বেশি হলে ফ্ল্যাট-জমি-বাড়ি, গয়না, ব্যাংক-শেয়ার-ফান্ড ও গাড়ির মতো সম্পদ আর ঋণ-দায়ের তালিকা দিতে হয়। আগে থেকে এগুলোর হিসাব হাতের কাছে রাখুন।", "With total income above ₹1 crore you must list assets (property, jewellery, bank, shares, funds, vehicles) and liabilities. Keep these ready before you start.")],
+    });
+  }
   if (form === "ITR-3" || form === "ITR-4") {
     sec.unshift({
       title: B("ব্যবসা/পেশার ফর্ম", "Business / profession form"),

@@ -145,14 +145,17 @@ export function computeRegime(rules, fy, inp, regime, cgNet) {
   if (hpUsable !== 0) add("hp", "বাড়ি থেকে আয়/(ক্ষতি)", "House property income / (loss)", hpUsable);
 
   // Business or profession
-  const biz = inp.business || { type: "none" };
+  // One or more business/profession parts: books-based profit, 44AD (business), 44ADA (profession).
+  const parts = Array.isArray(inp.businesses) ? inp.businesses : inp.business ? [inp.business] : [];
   let bizIncome = 0;
   const pr = common.presumptive;
-  if (biz.type === "44AD") {
-    const d = Math.min(100, Math.max(0, n(biz.digitalPct))) / 100;
-    bizIncome = Math.round(n(biz.turnover) * (d * pr.rate44ADDigital + (1 - d) * pr.rate44ADOther));
-  } else if (biz.type === "44ADA") bizIncome = n(biz.turnover) * pr.rate44ADA;
-  else if (biz.type === "regular") bizIncome = n(biz.profit);
+  for (const biz of parts) {
+    if (biz.type === "44AD") {
+      const d = Math.min(100, Math.max(0, n(biz.digitalPct))) / 100;
+      bizIncome += Math.round(n(biz.turnover) * (d * pr.rate44ADDigital + (1 - d) * pr.rate44ADOther));
+    } else if (biz.type === "44ADA") bizIncome += Math.round(n(biz.turnover) * pr.rate44ADA);
+    else if (biz.type === "regular") bizIncome += n(biz.profit);
+  }
   if (bizIncome) add("biz", "ব্যবসা/পেশার আয়", "Business / profession income", bizIncome);
 
   // Other sources
@@ -260,7 +263,8 @@ function monthsBetween(from, to) {
 }
 
 export function advanceTaxExempt(ageBand, inp) {
-  const noBusiness = !inp.business || inp.business.type === "none";
+  const bparts = Array.isArray(inp.businesses) ? inp.businesses : inp.business ? [inp.business] : [];
+  const noBusiness = bparts.every((b) => !b || b.type === "none");
   return ageBand !== "below60" && noBusiness;
 }
 
