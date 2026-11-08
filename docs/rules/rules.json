@@ -1,0 +1,84 @@
+{
+  "version": "2026-11-07.1",
+  "updated": "2026-11-07",
+  "status": "Cross-checked against several published summaries and against one real filed return (FY 2025-26). Not yet verified line-by-line against the Act or the department's own instructions, and not yet reviewed by a CA.",
+  "sources": [
+    "https://www.caclubindia.com/articles/new-tax-regime-fy-202627-complete-slab-rebate-marginal-relief-reference-56353.asp",
+    "https://carajput.com/learn/all-about-advance-tax-under-the-income-tax-act-2025.html",
+    "https://www.businesstoday.in/personal-finance/tax/story/itr-due-dates-revised-returns-and-audit-penalties-3-big-tax-changes-from-ay-2026-27-537295-2026-06-17",
+    "https://www.cleartax.in/s/which-itr-to-file"
+  ],
+  "common": {
+    "cess": 0.04,
+    "eVerifyDays": 30,
+    "fee234F": { "amount": 5000, "reducedAmount": 1000, "reducedIfIncomeUpTo": 500000 },
+    "deductionLimits": { "d80C": 150000, "d80CCD1B": 50000, "d80D": 100000, "d80TTA": 10000, "d80TTB": 50000, "hpSelfInterestOld": 200000, "hpLossSetoffOld": 200000 },
+    "capitalGains": {
+      "rate111A": 0.2,
+      "exempt112A": 125000,
+      "rate112A": 0.125,
+      "rateLtcgOther": 0.125,
+      "equityLongDays": 365,
+      "otherLongDays": 730
+    },
+    "surchargeCapSpecial": 0.15,
+    "presumptive": { "rate44ADDigital": 0.06, "rate44ADOther": 0.08, "rate44ADA": 0.5, "limit44AD": 20000000, "limit44ADA": 5000000 },
+    "itr1MaxIncome": 5000000,
+    "itr1MaxLtcg112A": 125000
+  },
+  "years": {
+    "2025-26": {
+      "label": "FY 2025-26 (AY 2026-27)",
+      "act": "Income-tax Act, 1961",
+      "dueDate": "2026-07-31",
+      "dueDateNonAudit": "2026-08-31",
+      "belatedLastDate": "2026-12-31",
+      "advanceDates": ["2025-06-15", "2025-09-15", "2025-12-15", "2026-03-15"],
+      "newRegime": {
+        "slabs": [[400000, 0], [800000, 0.05], [1200000, 0.1], [1600000, 0.15], [2000000, 0.2], [2400000, 0.25], [null, 0.3]],
+        "stdDeduction": 75000,
+        "rebate": { "limit": 1200000, "max": 60000, "marginalRelief": true },
+        "surcharge": [[5000000, 0], [10000000, 0.1], [20000000, 0.15], [null, 0.25]]
+      },
+      "oldRegime": {
+        "slabsByAge": {
+          "below60": [[250000, 0], [500000, 0.05], [1000000, 0.2], [null, 0.3]],
+          "60-80": [[300000, 0], [500000, 0.05], [1000000, 0.2], [null, 0.3]],
+          "80+": [[500000, 0], [1000000, 0.2], [null, 0.3]]
+        },
+        "stdDeduction": 50000,
+        "rebate": { "limit": 500000, "max": 12500, "marginalRelief": false },
+        "surcharge": [[5000000, 0], [10000000, 0.1], [20000000, 0.15], [50000000, 0.25], [null, 0.37]]
+      },
+      "needsVerification": []
+    },
+    "2026-27": {
+      "label": "FY 2026-27 (Tax Year 2026-27)",
+      "act": "Income-tax Act, 2025",
+      "dueDate": "2027-07-31",
+      "dueDateNonAudit": "2027-08-31",
+      "belatedLastDate": "2027-12-31",
+      "advanceDates": ["2026-06-15", "2026-09-15", "2026-12-15", "2027-03-15"],
+      "newRegime": {
+        "slabs": [[400000, 0], [800000, 0.05], [1200000, 0.1], [1600000, 0.15], [2000000, 0.2], [2400000, 0.25], [null, 0.3]],
+        "stdDeduction": 75000,
+        "rebate": { "limit": 1200000, "max": 60000, "marginalRelief": true },
+        "surcharge": [[5000000, 0], [10000000, 0.1], [20000000, 0.15], [null, 0.25]]
+      },
+      "oldRegime": {
+        "slabsByAge": {
+          "below60": [[250000, 0], [500000, 0.05], [1000000, 0.2], [null, 0.3]],
+          "60-80": [[300000, 0], [500000, 0.05], [1000000, 0.2], [null, 0.3]],
+          "80+": [[500000, 0], [1000000, 0.2], [null, 0.3]]
+        },
+        "stdDeduction": 50000,
+        "rebate": { "limit": 500000, "max": 12500, "marginalRelief": false },
+        "surcharge": [[5000000, 0], [10000000, 0.1], [20000000, 0.15], [50000000, 0.25], [null, 0.37]]
+      },
+      "needsVerification": [
+        "Section numbers changed under the Income-tax Act, 2025 (for example the 87A rebate is now section 156). Rates are reported unchanged by Budget 2026 but are not yet checked against the Act itself.",
+        "Interest sections for advance tax are reported as 424 and 425 under the new Act; mapping to the old 234B and 234C is not confirmed."
+      ]
+    }
+  }
+}
