@@ -240,3 +240,7 @@ h1:focus, h2:focus { outline: none; }
 .tip.warn { border-left-color: #f2b04a; }
 .dnote { color: #a9bbd3; font-size: 13.5px; margin: 10px 0 0; }
 @media print { .dash { display: none !important; } }
+
+.ug { list-style: none; margin: 0 0 12px; padding: 0; display: grid; gap: 10px; }
+.ug-step { display: flex; gap: 10px; align-items: flex-start; font-size: 17px; line-height: 1.55; }
+.ug-n { flex: none; width: 28px; height: 28px; border-radius: 50%; background: var(--navy); color: #fff; display: grid; place-items: center; font-size: 15px; font-weight: 600; margin-top: 2px; }

@@ -10,6 +10,7 @@ import { Result, Guide } from "./Result.jsx";
 import { History, About } from "./History.jsx";
 import { LedgerScreen } from "./Ledger.jsx";
 import { Lock } from "./Lock.jsx";
+import { UserGuide } from "./UserGuide.jsx";
 import { loadLedger, saveLedger, loadPin } from "./store.js";
 import { sumByKind, advanceByPeriod } from "./engine/ledger.js";
 
@@ -178,7 +179,7 @@ export default function App() {
     setTimeout(() => window.location.reload(), 400);
   };
 
-  const screens = { who: Who, papers: Papers, questions: Questions, income: Income, result: Result, guide: Guide, history: History, about: About, ledger: LedgerScreen };
+  const screens = { who: Who, papers: Papers, questions: Questions, income: Income, result: Result, guide: Guide, history: History, about: About, ledger: LedgerScreen, help: UserGuide };
   const Screen = screens[step];
 
   if (locked && pinSet) return <LangCtx.Provider value={{ lang, L }}><Lock onUnlock={() => setLocked(false)} /></LangCtx.Provider>;
@@ -251,6 +252,7 @@ function Home({ ctx }) {
         <button className="btn" onClick={() => go("who")}>{L("শুরু করুন", "Start")}</button>
         <button className="btn ghost" onClick={() => go("ledger")}>{L("কর জমার খাতা", "Tax payments ledger")}</button>
         <button className="btn ghost" onClick={() => go("history")}>{L("ফাইলিং ইতিহাস", "Filing history")}</button>
+        <button className="btn ghost" onClick={() => go("help")}>{L("ব্যবহারের গাইড", "How to use")}</button>
         {installEvt && (
           <button className="btn ghost" onClick={() => installEvt.prompt()}>{L("ফোনে অ্যাপ হিসেবে বসান", "Install on this phone")}</button>
         )}
